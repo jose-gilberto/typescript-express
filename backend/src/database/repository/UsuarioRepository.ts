@@ -1,19 +1,10 @@
-import { getManager } from 'typeorm';
+import { getManager, getConnection } from 'typeorm';
 
 import { Usuario } from '../../app/models/Usuario';
 
-export class UsuarioRepo {
+export class UsuarioRepository {
 
-    listarTodosUsuarios() {
-        return getManager().getRepository(Usuario).find();
+    getRepository() {
+        return getManager().getRepository(Usuario);
     }
-
-    listarPorParametro(parametro) {
-        return getManager().getRepository(Usuario).findOne(parametro);
-    }
-
-    adicionarUsuario(usuario) {
-        return getManager().getRepository(Usuario).insert(usuario);
-    }
-
 }

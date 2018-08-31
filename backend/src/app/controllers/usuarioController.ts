@@ -1,14 +1,14 @@
 import * as express from 'express';
 
-import { UsuarioRepo } from '../../database/repository/UsuarioRepository';
+import { UsuarioRepository } from '../../database/repository/UsuarioRepository';
 
 const router = express.Router();
 
 router.get('/', (req, res) => {
-    let usuarioRepo: UsuarioRepo = new UsuarioRepo();
+    let usuarioRepository: UsuarioRepository = new UsuarioRepository();
     console.log('Requisição listarUsuarios ==> GET');
 
-    usuarioRepo.listarTodosUsuarios().then((data: any) => {
+    usuarioRepository.getRepository().find().then((data: any) => {
         console.log(data);
         res.json(data);
     });

@@ -4,6 +4,7 @@ import { createConnection } from 'typeorm';
 import app from './app';
 import routes from './app/routes';
 import { dbOptions } from './database';
+import { ErrorHandler } from './app/middlewares/ErrorHandler';
 
 const PORTA = process.env.PORTA  || 3000;
 
@@ -16,6 +17,9 @@ createConnection(dbOptions).then(async conn => {
 
 // Importando rotas
 routes(app);
+
+// Capturando erros 404
+app.use(ErrorHandler.notFound);
 
 app.listen(PORTA, () => {
     console.log(`Servidor iniciado na porta ${PORTA}`);

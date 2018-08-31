@@ -1,11 +1,15 @@
 import * as express from 'express';
 import * as jwt from 'jsonwebtoken';
+import * as bcrypt from 'bcryptjs';
+import { getConnection, getManager } from 'typeorm';
 
-import { UsuarioRepo } from '../../database/repository/UsuarioRepository';
+import { UsuarioRepository } from '../../database/repository/UsuarioRepository';
 import { authConfig } from '../../config/authConfig';
+import { Usuario } from '../models/Usuario';
 
 const router = express.Router();
 
+// criar modulo de autenticação
 function generateToken(params = {}) {
     return jwt.sign({ params }, authConfig.secret ,{
         expiresIn: 5400
@@ -14,31 +18,61 @@ function generateToken(params = {}) {
 
 router.post('/registrar', async (req, res) => {
     const { email } = req.body;
-    let usuarioRepo = new UsuarioRepo();
+    let usuarioRepository = new UsuarioRepository();
 
-    try {
-        if (await usuarioRepo.listarPorParametro({ email })) {
+    try {        
+        if (await usuarioRepository.getRepository().findOne({ email })) {
             return res.status(400)
                     .json({
                         mensagem: "Erro ao cadastrar usuário!",
                         erro: "Já existe um usuário com este email!"
-                    })
+                    });
         }
-        // refatorar o retorno do usuário
-        let usuarioId = await usuarioRepo.adicionarUsuario(req.body);
-        let usuario = await usuarioRepo.listarPorParametro(usuarioId.identifiers[0]);
 
-        return res.status(200).send({
+        let usuario = new Usuario(req.body);
+
+        usuario = await usuarioRepository.getRepository().save(usuario);
+        usuario.senha = undefined;
+
+        return res.status(200).json({
             usuario,
-            token: generateToken(usuarioId.identifiers[0])
-        });        
+            token: generateToken(usuario.id)
+        });
     } catch (error) {
-        res.status(500)
+        return res.status(500)
             .json({
-                mensagem: 'Ops! Ocorreu um erro, tente novamente.',
+                mensagem: 'Ops! Ocorreu um erro, tente novamente. Se o erro persistir contate o administrador.',
                 erro: error
-            })
+            });
     }
 });
 
+router.post('/autenticar', async (req, res) => {
+    const { email, senha } = req.body;
+    let usuarioRepository = new UsuarioRepository();
+
+    const usuario = await usuarioRepository.getRepository().findOne({
+        select: ["id", "nome", "senha", "email"],
+        where: {
+            email
+        }
+    });
+
+    if (!usuario)
+        return res.status(400).json({
+            mensagem: "Erro ao autenticar usuário, credenciais inválidas!"
+        });
+    
+    if (!await bcrypt.compare(senha, usuario.senha))
+        return res.status(400).json({
+            mensagem: "Erro ao autenticar usuário, credenciais inválidas!"
+        });
+
+    usuario.senha = undefined;
+
+    return res.status(200).json({
+        usuario,
+        token: generateToken(usuario.id)
+    });
+});
 module.exports = app => app.use('/auth', router);
