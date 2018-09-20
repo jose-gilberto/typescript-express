@@ -1,9 +1,11 @@
-import * as express from 'express'
+import { Controller, Get } from 'routing-controllers'
 
-const router = express.Router()
+@Controller()
+export class HomeController {
 
-router.get('/', async (req, res) => {
-    res.send('Bem vindo ao Boilerplate Typescript + ORM!')
-})
+    @Get("/users")
+    getAll() {
+       return "This action returns all users";
+    }
 
-module.exports = app => app.use('/', router);
+}

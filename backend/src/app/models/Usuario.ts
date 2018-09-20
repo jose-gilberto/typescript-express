@@ -12,7 +12,7 @@ export class Usuario {
         }
     }
 
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn("increment", { type: "bigint" })
     id: number;
 
     @Column({ length:155 })
@@ -23,6 +23,12 @@ export class Usuario {
 
     @Column({ select: false })
     senha: string;
+
+    @Column({ select: false, nullable: true })
+    token: string;
+
+    @Column({ select: false, name:'token_tempo', type: 'timestamptz', nullable: true })
+    tokenTempo: Date;
 
     @BeforeInsert()
     criptografarSenha() {

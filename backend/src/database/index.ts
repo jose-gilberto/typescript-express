@@ -2,11 +2,11 @@ import "reflect-metadata";
 import { ConnectionOptions } from 'typeorm';
 
 export let dbOptions: ConnectionOptions = {
-    "type": "mysql",
+    "type": "postgres",
     "host": "localhost",
-    "port": 3306,
-    "username": "root",
-    "password": "",
+    "port": 5432,
+    "username": "postgres",
+    "password": "postgres",
     "database": "teste",
     "synchronize": true,
     "logging": false,
