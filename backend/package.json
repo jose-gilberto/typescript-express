@@ -36,6 +36,7 @@
     "nodemon": "^1.18.3",
     "pg": "^7.4.3",
     "reflect-metadata": "^0.1.12",
+    "rimraf": "^2.6.2",
     "routing-controllers": "^0.7.7",
     "typeorm": "^0.2.7"
   },

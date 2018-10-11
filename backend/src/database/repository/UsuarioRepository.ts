@@ -1,4 +1,4 @@
-import { getManager, getConnection } from 'typeorm';
+import { getManager } from 'typeorm';
 
 import { Usuario } from '../../app/models/Usuario';
 

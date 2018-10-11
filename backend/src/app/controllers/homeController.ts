@@ -1,11 +1,17 @@
-import { Controller, Get } from 'routing-controllers'
+import { Controller, Get, JsonController, Param, UseBefore } from 'routing-controllers'
+import { AuthMiddleware } from '../middlewares/AuthMiddleware';
 
-@Controller()
+@Controller('/home')
 export class HomeController {
 
-    @Get("/users")
+    @Get("/")
     getAll() {
-       return "This action returns all users";
+       return "<h4>Olá Mundo</h4>";
+    }
+
+    @Get("/param/:id")
+    getOne(@Param("id") id:number) {
+        return `${id}`;
     }
 
 }

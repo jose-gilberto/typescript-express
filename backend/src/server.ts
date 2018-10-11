@@ -2,12 +2,8 @@ import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 
 import app from './app';
-import routes from './app/routes';
 import { dbOptions } from './database';
-import { ErrorHandler } from './app/middlewares/ErrorHandler';
-import { useExpressServer } from 'routing-controllers';
-
-import { HomeController } from './app/controllers/HomeController';
+import routes from './app/routes';
 
 const PORTA = process.env.PORTA  || 3000;
 
@@ -19,17 +15,9 @@ createConnection(dbOptions).then(async conn => {
     console.log(`Ocorreu um erro ao conectar com o banco de dados: ${erro}`);
 });
 */
+
 // Importando rotas
-//routes(app);
-
-useExpressServer(app, {
-    controllers: [
-        HomeController
-    ]
-})
-
-// Capturando erros 404
-//app.use(ErrorHandler.notFound);
+routes(app);
 
 app.listen(PORTA, () => {
     console.log(`Servidor iniciado na porta ${PORTA}`);

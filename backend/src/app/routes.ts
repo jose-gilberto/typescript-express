@@ -1,12 +1,21 @@
-import * as fs from 'fs'
-import * as path from 'path'
+import { useExpressServer } from 'routing-controllers';
 
-export default app => {
-    fs.readdirSync(path.join(__dirname, 'controllers'))
-      .filter(file => ((file.indexOf('.')) !== 0 
-                && (file !== "routes.js") 
-                && (file !== "index.js")))
-      .forEach(file => {
-          require(path.join(__dirname, 'controllers', file))(app)
-      })
+// Controllers
+import { HomeController } from './controllers/HomeController';
+
+// Middlewares
+import { ServerErrorMiddleware } from './middlewares/ErrorHandlerMiddleware';
+import { AuthMiddleware } from './middlewares/AuthMiddleware';
+
+export default (app) => {
+    useExpressServer(app, {
+        controllers: [
+            HomeController,
+        ],
+        middlewares: [
+            ServerErrorMiddleware,
+            AuthMiddleware           
+        ],
+        defaultErrorHandler: false
+    });
 }
